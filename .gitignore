@@ -1,4 +1,8 @@
-cache/*.redir
-cache/*.cache
-cache/*.fullcast
-posters/*.jpg
+.idea/
+cache/*
+!cache/.gitkeep
+cast/*
+!cast/not-found.jpg
+posters/*
+!posters/not-found.jpg
+vendor/

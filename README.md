@@ -1,238 +1,219 @@
 # PHP IMDb.com Grabber
 
-**This class enables you to retrieve data from IMDb.com with PHP.**
+**This PHP library enables you to scrape data from IMDB.com.**
 
-*The script is a proof of concept. It's working pretty well, but you shouldn't use it since IMDb does not allow this method of data grabbing! Personally, I do not use or promote this script. You’re responsible IF you’re using it.*
+*This script is a proof of concept. It’s working, but you shouldn’t use it. IMDb doesn’t allow this method of data fetching. I do not use or promote this script. You’re responsible for using it.*
 
-The technique used is called “[web scraping](http://en.wikipedia.org/wiki/Web_scraping "Web scraping")”. That means: If IMDb changes anything on their HTML, the script is going to fail.
-
----
-
-Did you know about the available IMDb.com API? The price to use it is around $15.000. This might be fine for commercial projects, but it's impossible to afford for private/non-commercial ones.
-
----
-
-**If you want to thank me for my work and the support, feel free to do this through PayPal (use mail@fabian-beiner.de as payment destination) or just buy me a book at [Amazon](http://www.amazon.de/registry/wishlist/8840JITISN9L) – thank you! :-)**
+The technique used is called “[web scraping](http://en.wikipedia.org/wiki/Web_scraping "Web scraping at Wikipedia").”
+ Which means, if IMDb changes any of their HTML, the script is going to fail. I won’t update this on a regular basis, so don’t count on it to be working all the time.
 
 ## License
 
-Since version 5.5.0 the script is licensed under [CC BY-NC-SA 3.0](http://creativecommons.org/licenses/by-nc-sa/3.0/).
+[The MIT License (MIT)](https://fabianbeiner.mit-license.org/ "The MIT License")
 
-## Changes
+## Example Usage
 
-5.5.19
-- Fixed IMDB_FULL_CAST and IMDB_YEAR.
-- getSitesAsUrl() only returns a link, if the url starts with "http".
+```php
+<?php
+include_once 'imdb.class.php';
+$IMDB = new IMDB('Movie Title or IMDB URL');
+if ($IMDB->isReady) {
+    print_r($IMDB->getAll());
+} else {
+    echo 'Movie not found. 😞';
+}
+```
 
-5.5.18
-- The latest pull request I merged broke the caching. Sorry guys, I'll never ever pull a request that easily again.
-- Added caching for getFullCast().
-- Minor code changes.
+## Available Methods
 
-5.5.17
-- *Heavy* reformating.
-- Merged with the changes by *emersonbroga*. (Thanks!)
-- Added getFullCast().
-- A few smaller fixes.
-- Fixed MPAA.
+**Get all available data**
 
-5.5.16
-- Typos.
+`getAll()`
 
-5.5.15
-- Fixed IMDB_MPAA. *(Thanks to bla0r)*
-- Added possibility to search only for TV shows etc. via IMDB_SEARCHFOR. *(Thanks to bla0r)* (Note: This should be setable via public variable someday ...)
+**Also Known As**
 
-5.5.14
-- Fixed IMDB_DIRECTOR.
-- Added IMDB_LANG (so you can define which Accept-Language header will be used). *(Thanks to bonk-se.)*
-- Fixed IMDB_TITLE_ORIG. *(Thanks to Tamás)*
+`getAka()`
 
-5.5.13
-- Fixed some regular expressions (cast, name, title, year)
-- Changed MPAA rating regex - then again, I don't know if this is MPAA or something else. I don't care. :)
+**All local names**
 
-5.5.12
+`getAkas()`
 
-- Now checking if there is a valid IMDb id given as search param (this should fix https://github.com/FabianBeiner/PHP-IMDB-Grabber/issues/29)
-- Instead of using the URL as cache, now using the ID, as this is always the same.
+**Aspect Ratio**
 
-5.5.11
+`getAspectRatio()`
 
-- `getPoster('big')` is back. *(Thanks to Robert again)*
+**Awards**
 
-5.5.10
+`getAwards()`
 
-- Fixed IMDB_RUNTIME.
-- Added getSeasonsAsUrl() and reversed the return of getSeasons (starting with Season 1).
+**Budget**
 
-5.5.9
+`getBudget()`
 
-- Updated almost every used regex. Gosh, this took me hours …
-- `getTitle()` now returns the local movie name if called via `getTitle(true)`. Falls back to global one.
-- Tried to fix MPAA rating. Should work, but who knows? ;)
-- Removed the `getPoster('big')` parameter as this fails on most of the pictures. So call getPoster() without any parameter.
+**Cast**
 
-*(As this is a really heavy update, there will probably be a bunch of mistakes. But give it a try.)*
+`getCast($iLimit = 0, $bMore = true)` - `$iLimit` defines the maximum amount of people returned, `$bMore` if "…" should be added to the string if needed
 
+**Cast Images**
 
-5.5.8
+`getCastImages($iLimit = 0, $bMore = true, $sSize = 'small', $bDownload = false)` - `$iLimit` defines the maximum amount of people returned, `$bMore` if "…" should be added to the string if needed, `$sSize` defines the size of the cast image "small, mid and big", `$bDownload` if the cast image should be downloaded or not
 
-- Added option to download bigger images: `$oIMDb->getPoster('big')`; *(Thanks to Robert)*
+**Cast (with links)**
 
-5.5.7
+`getCastAsUrl($iLimit = 0, $bMore = true, $sTarget = '')` - `$iLimit` defines the maximum amount of people returned, `$bMore` if "…" should be added to the string if needed, `$sTarget` defines a target
 
-- Fixed rating & search (again). *(Thanks to Chiel)*
+**Cast and Character**
 
-5.5.6
+`getCastAndCharacter($iLimit = 0, $bMore = true)` - `$iLimit` defines the maximum amount of people returned, `$bMore` if "…" should be added to the string if needed
 
-- Fixed search.
+**Cast and Character (with links)**
 
-5.5.5
+`getCastAndCharacterAsUrl($iLimit = 0, $bMore = true, $sTarget = '')` - `$iLimit` defines the maximum amount of people returned, `$bMore` if "…" should be added to the string if needed, `$sTarget` defines a target
 
-- Now looking for an exact match first, instead of popular one.
+**Certification**
 
-5.5.4
+`getCertification()`
 
-- Fixed getSeasons()
-- Added getAll (which returns ALL information as an object) *(Thanks to Brett Brewer)*
+**Color**
 
-5.5.3
+`getColor()`
 
-- Fixed getTrailerAsUrl() *(Thanks to luizrafael)*
-- Fixed imdb.tests.php
+**Company**
 
-5.5.2
+`getCompany()`
 
-- Fixed getSeasons() & $_strRoot.
+**Company (with links)**
 
-5.5.1
+`getCompanyAsUrl($sTarget = '')` - `$sTarget` defines a target
 
-- Fixed a bug in the caching system.
-- Added getAspectRatio(), getOpening(), getSoundMix() and getSitesAsUrl($strTarget = '').
-- Every getSomethingAsUrl got a option to add a target now.
+**Country**
 
-5.5.0
+`getCountry()`
 
-- Fixed almost every function, like Cast, Color, Company, Country, Language, Director and Writer.
-- Added $strSeperator which lets you define the seperator for lists (default is /).
-- Did some code cleaning.
-- Optimized local caching system.
-- Added a small remote debugging feature.
-- Added a trim to every possible return.
-- Added getDescription() which returns a small description given by IMDb.
-- Changed License. Which means basically: You're not allowed to use this for your commercial work.
--
+**Country (with links)**
 
-5.4.3
+`getCountryAsUrl($sTarget = '')` - `$sTarget` defines a target
 
-- Fixed getCompanyAsUrl()
+**Creator**
 
-5.4.2
+`getCreator()`
 
-- Fixed title and trailer
+**Creator (with links)**
 
-5.4.1
+`getCreatorAsUrl($sTarget = '')` - `$sTarget` defines a target
 
-- Fixed title
-- Added getTrailer() and getAka() *(Thanks to Seifer Almasy)*
+**Description**
 
-5.4.0
+`getDescription()`
 
-- Fixed Writer, Writer as URL and Votes
-- Added getColor(), getCompany() and getCompanyAsUrl()
+**Director**
 
-5.3.2
+`getDirector()`
 
-- Fixed Director, MPAA, Country & Language
+**Director (with links)**
 
-5.3.1
+`getDirectorAsUrl($sTarget = '')` - `$sTarget` defines a target
 
-- Fixed IMDB_VOTES regular expression *(Thanks to hareevs)*
-- Tiny cleanup.
+**Genre**
 
-5.3.0
+`getGenre()`
 
-- Added ".redir"-suffix to the redirect caches
-- Naming local posters is using the movie id now (instead of a cryptic md5 hash)
-- Added variable to specific a string to return if movie is not found ($strNotFound)
-- Removing cookie after it's not used anymore
-- Some code tweaks
+**Genre (with links)**
 
-5.2.4
+`getGenreAsUrl($sTarget = '')` - `$sTarget` defines a target
 
-- Fixed a few functions in imdb.class.php
-- Added gallery script *(Thanks to xsabianus)*
-- Cleaned the search script
+**Language**
 
-5.2.3
+`getLanguage()`
 
-- And another fix for getCastAndCharacter(AsUrl())
+**Language (with links)**
 
-5.2.2
+`getLanguageAsUrl($sTarget = '')` - `$sTarget` defines a target
 
-- Forgot a link in getCastAndCharacterAsUrl() function
+**Location**
 
-5.2.1
+`getLocation()`
 
-- Added getCastAndCharacter() and getCastAndCharacterAsUrl() *(Thanks to Taha Demirhan for snippets)*
-- Added imdb.search.php - a small example search form *(Thanks to xsabianus)*
+**Location (with links)**
 
-5.2.0
+`getLocationAsUrl($sTarget = '')` - `$sTarget` defines a target
 
-- Added series functions getSeasons() and getCreator()/getCreatorAsUrl() *(Coded by mali11011)*
+**MPAA**
 
-5.1.1
+`getMpaa()`
 
-- Fixed getCastAsUrl(); *(Reported by od3n)*
+**Plot**
 
-5.1.0
+`getPlot($iLimit = 0)` - `$iLimit` defines the maximum characters returned
 
-- Throws an exception if there is no posters/cache directory or cURL available
-- Some code cleanup
-- Added IMDB_LOCATION
+**Plot Keywords**
 
-5.0.4
+`getPlotKeywords()`
 
-- Removed/cleaned some variable names
-- Fixed IMDB_POSTER regular expression
-- Changed IMDB_PLOT regular expression
+**Poster**
 
-5.0.3
+`getPoster($sSize = 'small', $bDownload = true)` - `$sSize` defines small or big poster size, `$bDownload` if the poster should be downloaded or not
 
-- Fixed regular expression for title
+**Rating**
 
-5.0.2
+`getRating()`
 
-- Added regular expression for original title (which I prefer instead of the localized one)
+**Release Date**
 
-5.0.1
+`getReleaseDate()`
 
-- Renamed 'redirects' to 'cache'
-- Added a simple caching mechanism. Default is set to one day (1440 minutes). Feel free to change this: **new IMDB('Movie', 60)** (for one hour). This speeds up everything dramatically.
-- Removed /10 from rating return
+**Runtime**
 
-5.0.0
+`getRuntime()`
 
-- **Complete rewrite**
-- Added caching for redirects
-- Fixed ALL regular expressions according to new IMDb layout
-- Added getBudget function
-- Added debug option
+**Seasons**
+
+`getSeasons()`
+
+**Seasons (with links)**
+
+`getSeasonsAsUrl($sTarget = '')` - `$sTarget` defines a target
+
+**Sound Mix**
+
+`getSoundMix()`
+
+**Tagline**
+
+`getTagline()`
+
+**Title**
+
+`getTitle($bForceLocal = false)` - `$bForceLocal` tries to return the original name of the movie
+
+**Trailer**
+
+`getTrailerAsUrl($bEmbed = false)` - `$bEmbed` defines if you want to link to player directly or not.
+
+**Url**
+
+`getUrl()`
+
+**User Review**
+
+`getUserReview()`
+
+**Votes**
+
+`getVotes()`
+
+**Writer**
+
+`getWriter()`
+
+**Writer (with links)**
+
+`getWriterAsUrl($sTarget = '')` - `$sTarget` defines a target
+
+**Year**
+
+`getYear()`
 
 ## Bugs?
-If you run into a problem, feel free to contact me. I will help you if my time allows it. However, support is not guaranteed.
 
-I will only answer bug report if you provide me a detailed output of the failing script – please enable debug through setting "**const IMDB_DEBUG = true;**" in imdb.class.php.
-
-## Wishes?
-
-Well, normally I do not update or fix parts of this script anymore. I do update it, if one of the few givers asks me for an update. But it's very unlikely that I'll add new features for just "anyone". But feel free to add your wish to the project wiki.
-
-## Usage
-
-The usage of this script is simple. Just have a look at imdb.example.php – you will understand easily how it works.
-
-## Example output (of imdb.example.php)
-
-![Screenshot](http://img801.imageshack.us/img801/3749/imdbc.png "Screenshot of imdb.example.php output")
+If you run into any malfunctions, feel free to submit an issue. Make sure to enable debugging: `const IMDB_DEBUG = true;` in `imdb.class.php`.
